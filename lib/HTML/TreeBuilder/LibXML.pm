@@ -1,7 +1,7 @@
 package HTML::TreeBuilder::LibXML;
 use strict;
 use warnings;
-our $VERSION = '0.01_01';
+our $VERSION = '0.01_02';
 use Carp ();
 use XML::LibXML;
 use HTML::TreeBuilder::LibXML::Node;
@@ -14,6 +14,10 @@ sub new {
 sub parse {
     my ($self, $html) = @_;
     my $parser = XML::LibXML->new();
+    $parser->recover(1);
+    $parser->recover_silently(1);
+    $parser->keep_blanks(0);
+    $parser->expand_entities(1);
     $self->{doc} = $parser->parse_html_string($html);
 }
 
@@ -33,7 +37,7 @@ sub replace_original {
     require HTML::TreeBuilder::XPath;
     no warnings 'redefine';
     *HTML::TreeBuilder::XPath::new = sub {
-        HTML::TreeBuilder::LibXML->new(@_);
+        HTML::TreeBuilder::LibXML->new();
     };
 }
 
@@ -58,6 +62,19 @@ I want to use it. But, some libraries uses HTML::TreeBuilder.
 HTML::TreeBuilder::LibXML is drop-in-replacement for HTML::TreeBuilder::XPath.
 
 Currently, this module implements good enough methods for work with Web::Scraper.
+
+
+=head1 BENCHMARK
+
+This is a benchmark result by tools/benchmark.pl
+
+        Web::Scraper: 0.26
+        HTML::TreeBuilder::XPath: 0.09
+        HTML::TreeBuilder::LibXML: 0.01_01
+
+                     Rate  no_libxml use_libxml
+        no_libxml  5.45/s         --       -94%
+        use_libxml 94.3/s      1632%         --
 
 =head1 AUTHOR
 
