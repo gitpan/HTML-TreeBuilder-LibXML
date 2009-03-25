@@ -26,6 +26,7 @@ README
 t/00_compile.t
 t/01_simple.t
 t/02_web_scraper.t
+t/03_destructor.t
 xt/01_podspell.t
 xt/02_perlcritic.t
 xt/03_pod.t

@@ -1,7 +1,7 @@
 package HTML::TreeBuilder::LibXML;
 use strict;
 use warnings;
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 use Carp ();
 use base 'HTML::TreeBuilder::LibXML::Node';
 use XML::LibXML;
@@ -25,10 +25,32 @@ sub parse {
 
 sub replace_original {
     require HTML::TreeBuilder::XPath;
+
+    my $orig = HTML::TreeBuilder::XPath->can('new');
+
     no warnings 'redefine';
     *HTML::TreeBuilder::XPath::new = sub {
         HTML::TreeBuilder::LibXML->new();
     };
+
+    if (defined wantarray) {
+        return HTML::TreeBuilder::LibXML::Destructor->new(
+            sub { *HTML::TreeBuilder::XPath::new = $orig } );
+    }
+    return;
+}
+
+package # hide from cpan
+    HTML::TreeBuilder::LibXML::Destructor;
+
+sub new {
+    my ( $class, $callback ) = @_;
+    bless { cb => $callback }, $class;
+}
+
+sub DESTROY {
+    my $self = shift;
+    $self->{cb}->();
 }
 
 1;
@@ -66,16 +88,14 @@ This is a benchmark result by tools/benchmark.pl
         no_libxml  5.45/s         --       -94%
         use_libxml 94.3/s      1632%         --
 
-=head1 THANKS TO
-
-woremacx++
-http://d.hatena.ne.jp/woremacx/20080202/1201927162
-
 =head1 AUTHOR
 
 Tokuhiro Matsuno E<lt>tokuhirom  slkjfd gmail.comE<gt>
 
 =head1 THANKS TO
+
+woremacx++
+http://d.hatena.ne.jp/woremacx/20080202/1201927162
 
 Tatsuhiko Miyagawa
 
