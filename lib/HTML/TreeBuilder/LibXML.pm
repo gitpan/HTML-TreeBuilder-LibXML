@@ -1,10 +1,10 @@
 package HTML::TreeBuilder::LibXML;
 use strict;
 use warnings;
-our $VERSION = '0.01_02';
+our $VERSION = '0.01_03';
 use Carp ();
+use base 'HTML::TreeBuilder::LibXML::Node';
 use XML::LibXML;
-use HTML::TreeBuilder::LibXML::Node;
 
 sub new {
     my $class = shift;
@@ -18,19 +18,8 @@ sub parse {
     $parser->recover_silently(1);
     $parser->keep_blanks(0);
     $parser->expand_entities(1);
-    $self->{doc} = $parser->parse_html_string($html);
-}
-
-sub delete {
-    my $self = shift;
-    delete $self->{$_} for keys %$self;
-}
-
-sub findnodes {
-    my ($self, $xpath) = @_;
-
-    my @nodes = $self->{doc}->findnodes( $xpath );
-    return map { HTML::TreeBuilder::LibXML::Node->new($_) } @nodes;
+    my $doc = $parser->parse_html_string($html);
+    $self->{node} = $doc->documentElement;
 }
 
 sub replace_original {
@@ -75,6 +64,11 @@ This is a benchmark result by tools/benchmark.pl
                      Rate  no_libxml use_libxml
         no_libxml  5.45/s         --       -94%
         use_libxml 94.3/s      1632%         --
+
+=head1 THANKS TO
+
+woremacx++
+http://d.hatena.ne.jp/woremacx/20080202/1201927162
 
 =head1 AUTHOR
 
