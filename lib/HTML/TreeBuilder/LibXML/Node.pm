@@ -3,6 +3,13 @@ use strict;
 use warnings;
 use Carp();
 
+=head1 TODO
+
+    parent
+
+=cut
+
+
 sub new {
     my ($class, $node) = @_;
     Carp::croak 'missing node' unless $node;
@@ -39,6 +46,19 @@ sub tag {
     $_[0]->{node}->localname
 }
 
+sub id {
+    if (@_==2) {
+        # setter
+        if (defined $_[1]) {
+            $_[0]->{node}->setAttribute('id', $_[1]);
+        } else {
+            $_[0]->{node}->removeAttribute('id');
+        }
+    } else {
+        $_[0]->{node}->getAttribute('id');
+    }
+}
+
 # hack for Web::Scraper
 sub isa {
     my ($self, $klass) = @_;
@@ -48,9 +68,16 @@ sub isa {
 sub findnodes {
     my ($self, $xpath) = @_;
 
-    die "\$self is not loaded: $self" unless $self->{node};
+    $self->_eof_or_die unless $self->{node};
     my @nodes = $self->{node}->findnodes( $xpath );
-    return map { HTML::TreeBuilder::LibXML::Node->new($_) } @nodes;
+    @nodes = map { HTML::TreeBuilder::LibXML::Node->new($_) } @nodes;
+    wantarray ? @nodes : \@nodes;
+}
+sub findvalue {
+    my ($self, $xpath) = @_;
+
+    $self->_eof_or_die unless $self->{node};
+    $self->{node}->findvalue( $xpath );
 }
 
 sub clone {
@@ -74,6 +101,56 @@ sub delete {
 sub getFirstChild {
     my $self = shift;
     __PACKAGE__->new($self->{node}->getFirstChild);
+}
+
+sub look_down {
+    my $self = shift;
+    my @args = @_;
+
+    $self->_eof_or_die unless $self->{node};
+
+    my @filter;
+    my $xpath = "//*"; # default
+    while (@args) {
+        if (ref $args[0] eq 'CODE') {
+            my $code = shift @args;
+            push @filter, $code;
+        } elsif (@args >= 2 && $args[0] eq '_tag') {
+            my($tag, $want_tag) = splice(@args, 0, 2);
+            $xpath = "//$want_tag";
+        } elsif (@args >= 2) {
+            my($attr, $stuff) = splice(@args, 0, 2);
+            if (ref $stuff eq 'Regexp') {
+                push @filter, sub { no warnings 'uninitialized'; $_[0]->attr($attr) =~ $stuff };
+            } else {
+                push @filter, sub { no warnings 'uninitialized'; $_[0]->attr($attr) eq $stuff };
+            }
+        } else {
+            Carp::carp("Don't know what to do with @args");
+            shift @args;
+        }
+    }
+
+    my @nodes = $self->findnodes($xpath);
+    my @wants = grep {
+        my $node = $_;
+        my $ok = 1;
+        for my $filter (@filter) {
+            $filter->($_) or $ok = 0;
+        }
+        $ok ? $node : ();
+    } @nodes;
+
+    wantarray ? @wants : $wants[0];
+}
+
+sub _eof_or_die {
+    my $self = shift;
+    if (defined($self->{_content})) {
+        $self->eof;
+    } else {
+        Carp::croak "\$self is not loaded: $self"
+    }
 }
 
 1;
