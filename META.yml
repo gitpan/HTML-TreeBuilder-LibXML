@@ -1,5 +1,5 @@
 ---
-abstract: 'HTML::TreeBuilder::XPath compatible interface with libxml'
+abstract: 'HTML::TreeBuilder and XPath compatible interface with libxml'
 author:
   - 'Tokuhiro Matsuno <tokuhirom  slkjfd gmail.com>'
 build_requires:
@@ -25,4 +25,4 @@ requires:
   XML::LibXML: 1.69
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.07
+version: 0.08
