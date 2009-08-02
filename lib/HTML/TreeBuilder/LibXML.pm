@@ -1,7 +1,7 @@
 package HTML::TreeBuilder::LibXML;
 use strict;
 use warnings;
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 use Carp ();
 use base 'HTML::TreeBuilder::LibXML::Node';
 use XML::LibXML;
@@ -50,13 +50,22 @@ sub parse {
 sub parse_file {
     my $self = shift;
     my $doc  = $self->_parser->parse_html_file(@_);
-    $self->{node} = $doc->documentElement;
+    $self->{node} = $self->_documentElement($doc);
 }
 
 sub eof {
     my ($self, ) = @_;
     my $doc = $self->_parser->parse_html_string($self->{_content});
-    $self->{node} = $doc->documentElement;
+    $self->{node} = $self->_documentElement($doc);
+}
+
+sub _documentElement {
+    my($self, $doc) = @_;
+    return $doc->documentElement || do {
+        my $elem = $doc->createElement("html");
+        $elem->appendChild($doc->createElement("body"));
+        $elem;
+    };
 }
 
 sub replace_original {

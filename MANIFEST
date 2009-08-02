@@ -28,6 +28,7 @@ t/01_simple.t
 t/02_web_scraper.t
 t/03_destructor.t
 t/04_new_methods.t
+t/05_empty.t
 t/HTML-TreeBuilder-XPath.t
 t/test.html
 xt/01_podspell.t
