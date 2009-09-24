@@ -27,6 +27,16 @@ sub as_text {
     $_[0]->{node}->textContent;
 }
 
+sub as_trimmed_text {
+    my $text = shift->as_text(@_);
+    $text =~ s/[\n\r\f\t ]+$//s;
+    $text =~ s/^[\n\r\f\t ]+//s;
+    $text =~ s/[\n\r\f\t ]+/ /g;
+    return $text;
+}
+sub as_text_trimmed { shift->as_trimmed_text(@_) } # alias
+
+
 sub as_XML {
     $_[0]->{node}->toString;
 }
@@ -172,6 +182,7 @@ HTML::TreeBuilder::LibXML::Node - HTML::Element compatible API for HTML::TreeBui
   my $value = $node->attr('name');
   my $string = $node->string_value;
   my $text   = $node->as_text;
+  my $t_text = $node->as_trimmed_text;
   my $xml    = $node->as_XML;
   my $html   = $node->as_HTML;
   my $tag    = $node->tag;
@@ -191,4 +202,3 @@ HTML::TreeBuilder::LibXML::Node - HTML::Element compatible API for HTML::TreeBui
   my $child = $node->getFirstChild;
 
 
-=back
