@@ -1,7 +1,7 @@
 package HTML::TreeBuilder::LibXML;
 use strict;
 use warnings;
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 use Carp ();
 use base 'HTML::TreeBuilder::LibXML::Node';
 use XML::LibXML;
@@ -55,6 +55,7 @@ sub parse_file {
 
 sub eof {
     my ($self, ) = @_;
+    $self->{_content} = ' ' if defined $self->{_content} && $self->{_content} eq ''; # HACK
     my $doc = $self->_parser->parse_html_string($self->{_content});
     $self->{node} = $self->_documentElement($doc);
 }
