@@ -1,7 +1,7 @@
 package HTML::TreeBuilder::LibXML;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 use Carp ();
 use base 'HTML::TreeBuilder::LibXML::Node';
 use XML::LibXML;
@@ -131,7 +131,7 @@ HTML::TreeBuilder, which could be slow for a large document.
 HTML::TreeBuilder::LibXML is drop-in-replacement for HTML::TreeBuilder::XPath.
 
 This module doesn't implement all of HTML::TreeBuilder and
-HTML::Element APIs, but eough methods are defined so modules like
+HTML::Element APIs, but enough methods are defined so modules like
 Web::Scraper work.
 
 =head1 BENCHMARK
