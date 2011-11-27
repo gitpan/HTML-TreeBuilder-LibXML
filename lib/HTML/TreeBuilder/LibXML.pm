@@ -1,7 +1,7 @@
 package HTML::TreeBuilder::LibXML;
 use strict;
 use warnings;
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 use Carp ();
 use base 'HTML::TreeBuilder::LibXML::Node';
 use XML::LibXML;
@@ -89,6 +89,7 @@ sub replace_original {
 
 # The HTML::TreeBuilder has this method and it is needed to us for web-scraper module
 sub store_comments { }
+sub ignore_unknown { }
 
 package # hide from cpan
     HTML::TreeBuilder::LibXML::Destructor;
