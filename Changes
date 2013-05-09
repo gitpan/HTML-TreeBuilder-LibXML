@@ -1,5 +1,10 @@
 Revision history for Perl extension HTML::TreeBuilder::LibXML
 
+0.18 2013-05-09T01:27:46Z
+
+    - implemented matches(), parent(), guts() node method
+      (Carlos Fernando Avila Gratz)
+
 0.17
 
     handle /(de)?objectify_text/ for <script> extraction

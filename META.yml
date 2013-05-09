@@ -1,15 +1,16 @@
 ---
 abstract: 'HTML::TreeBuilder and XPath compatible interface with libxml'
 author:
-  - 'Tokuhiro Matsuno <tokuhirom  slkjfd gmail.com>'
+  - 'Tokuhiro Matsuno <tokuhirom@gmail.com>'
 build_requires:
-  ExtUtils::MakeMaker: 6.59
+  Test::Exception: 0
   Test::More: 0.98
 configure_requires:
-  ExtUtils::MakeMaker: 6.59
-distribution_type: module
-dynamic_config: 1
-generated_by: 'Module::Install version 1.06'
+  CPAN::Meta: 0
+  CPAN::Meta::Prereqs: 0
+  Module::Build: 0.38
+dynamic_config: 0
+generated_by: 'Minilla/v0.4.2, CPAN::Meta::Converter version 2.120921'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -17,13 +18,38 @@ meta-spec:
 name: HTML-TreeBuilder-LibXML
 no_index:
   directory:
-    - inc
     - t
     - xt
+    - inc
+    - share
+    - eg
+    - examples
+    - author
+provides:
+  HTML::TreeBuilder::LibXML:
+    file: lib/HTML/TreeBuilder/LibXML.pm
+    version: 0.18
+  HTML::TreeBuilder::LibXML::Node:
+    file: lib/HTML/TreeBuilder/LibXML/Node.pm
+    version: 0
 requires:
   HTML::TreeBuilder::XPath: 0.14
+  LWP::UserAgent: 6
+  URI: 0
+  Web::Scraper: 0
   XML::LibXML: 1.7
-  perl: 5.8.1
+  perl: 5.008001
 resources:
-  license: http://dev.perl.org/licenses/
-version: 0.17
+  bugtracker: https://github.com/tokuhirom/HTML-TreeBuilder-LibXML/issues
+  homepage: https://github.com/tokuhirom/HTML-TreeBuilder-LibXML
+  repository: git://github.com/tokuhirom/HTML-TreeBuilder-LibXML.git
+version: 0.18
+x_contributors:
+  - 'Masahiro Chiba <nihen@megabbs.com>'
+  - 'kimura.hideo <kimurahideo@Administrator.local>'
+  - 'Tatsuhiko Miyagawa <miyagawa@bulknews.net>'
+  - 'Perlover <perlover@perlover.com>'
+  - 'John SJ Anderson <johna@farematrix.com>'
+  - 'Oleg G <verdrehung@gmail.com>'
+  - 'Stanislaw Pusep <creaktive@gmail.com>'
+  - 'Carlos Fernando Avila Gratz <cafe@q1software.com>'

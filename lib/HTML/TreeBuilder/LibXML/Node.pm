@@ -113,6 +113,18 @@ sub findnodes {
 *findnodes_as_string  = \&findvalue;
 *findnodes_as_strings = \&findvalues;
 
+sub findnodes_filter {
+    my( $self , $xpath , $callback ) = @_;
+
+    Carp::croak "Second argument must be coderef"
+          unless $callback and ref $callback eq 'CODE';
+
+    my @nodes = $self->findnodes( $xpath );
+    @nodes = grep { $callback->($_) } @nodes;
+
+    wantarray ? @nodes : \@nodes;
+}
+
 sub findvalue {
     my ($self, $xpath) = @_;
 
@@ -150,6 +162,31 @@ sub delete {
 sub getFirstChild {
     my $self = shift;
     __PACKAGE__->new($self->{node}->getFirstChild);
+}
+
+sub childNodes {
+    my $self = shift;
+
+    $self->_eof_or_die unless $self->{node};
+    my @nodes = $self->{node}->childNodes;
+    @nodes = map { __PACKAGE__->new($_) } @nodes;
+    wantarray ? @nodes : \@nodes;
+}
+
+sub left {
+    my $self = shift;
+
+    $self->_eof_or_die unless $self->{node};
+    my $prev = $self->{node}->previousNonBlankSibling;
+    return $prev ? __PACKAGE__->new( $prev ) : undef;
+}
+
+sub right {
+    my $self = shift;
+
+    $self->_eof_or_die unless $self->{node};
+    my $next = $self->{node}->nextNonBlankSibling;
+    return $next ? __PACKAGE__->new( $next ) : undef;
 }
 
 sub look_down {
@@ -217,6 +254,41 @@ sub _eof_or_die {
     }
 }
 
+
+sub matches {
+    my ($self, $xpath) = @_;    
+    
+    foreach ($self->{node}->ownerDocument->findnodes($xpath)) {
+        return 1 if $_->isEqual($self->{node});
+    }    
+    
+    return;
+}
+
+sub parent {
+    my $self = shift;
+    if (@_) {    
+        # set        
+        if (defined $_[0]) {
+            Carp::croak "an element can't be made its own parent"
+                if ref $_[0]->{node}->isEqual($self->{node});    # sanity
+                
+            $_[0]->{node}->appendChild($self->{node});                        
+        }
+        else {
+            # unset
+            $self->{node}->unbindNode;    
+        }
+                
+    }
+    else {
+        # get
+        my $parent = $self->{node}->parentNode;
+        return ref $parent ne 'XML::LibXML::DocumentFragment' ? ref($self)->new($parent) : undef;
+    }
+
+}
+
 1;
 
 __END__
@@ -237,6 +309,8 @@ HTML::TreeBuilder::LibXML::Node - HTML::Element compatible API for HTML::TreeBui
   my $id     = $node->id;
   my $clone  = $node->clone;
   $node->delete;
+  my $prev_sib = $node->left;
+  my $next_sib = $node->right;
   $node->look_down(@args);
   my %attr     = $node->all_attr;
   my %attr     = $node->all_external_attr;
