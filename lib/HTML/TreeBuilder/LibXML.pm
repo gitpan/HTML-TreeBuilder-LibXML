@@ -1,7 +1,7 @@
 package HTML::TreeBuilder::LibXML;
 use strict;
 use warnings;
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 use Carp ();
 use base 'HTML::TreeBuilder::LibXML::Node';
 use XML::LibXML;
@@ -84,16 +84,14 @@ sub elementify {
 
 sub guts {
     my ($self, $destructive) = @_;
-            
-    my @out = $self->{_implicit_html} ? $self->{node}->findnodes('/html/body/*')
+
+    my @out = $self->{_implicit_html} ? map { $_->childNodes } $self->{node}->findnodes('/html/head | /html/body')
                                       : $self->{node};
 
-    if ($destructive) {
-        foreach (@out) {
-            my $doc = XML::LibXML->createDocument;
-            $doc->adoptNode($_); # node will unbind from current document
-            $doc->setDocumentElement($_);   
-        }        
+    if ($destructive && @out > 0) {
+        my $doc = XML::LibXML->createDocument;
+        $doc->setDocumentElement($out[0]); # 1st child
+        $out[0]->addSibling($_) foreach @out[1..$#out];
     }
         
     return map { HTML::TreeBuilder::LibXML::Node->new($_) } @out if wantarray;    # one simple normal case.
