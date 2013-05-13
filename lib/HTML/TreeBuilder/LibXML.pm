@@ -1,7 +1,7 @@
 package HTML::TreeBuilder::LibXML;
 use strict;
 use warnings;
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 use Carp ();
 use base 'HTML::TreeBuilder::LibXML::Node';
 use XML::LibXML;
@@ -85,7 +85,7 @@ sub elementify {
 sub guts {
     my ($self, $destructive) = @_;
 
-    my @out = $self->{_implicit_html} ? map { $_->childNodes } $self->{node}->findnodes('/html/head | /html/body')
+    my @out = $self->{_implicit_html} ? map { $_->nonBlankChildNodes } $self->{node}->findnodes('/html/head | /html/body')
                                       : $self->{node};
 
     if ($destructive && @out > 0) {
