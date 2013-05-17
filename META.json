@@ -59,7 +59,7 @@
    "provides" : {
       "HTML::TreeBuilder::LibXML" : {
          "file" : "lib/HTML/TreeBuilder/LibXML.pm",
-         "version" : "0.22"
+         "version" : "0.23"
       },
       "HTML::TreeBuilder::LibXML::Node" : {
          "file" : "lib/HTML/TreeBuilder/LibXML/Node.pm"
@@ -76,7 +76,7 @@
          "web" : "https://github.com/tokuhirom/HTML-TreeBuilder-LibXML"
       }
    },
-   "version" : "0.22",
+   "version" : "0.23",
    "x_contributors" : [
       "Masahiro Chiba <nihen@megabbs.com>",
       "kimura.hideo <kimurahideo@Administrator.local>",
